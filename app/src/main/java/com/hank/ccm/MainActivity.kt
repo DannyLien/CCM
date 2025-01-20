@@ -113,6 +113,12 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    private val getCache: Intent
+        get() {
+            val cache = Intent(this, CacheService::class.java)
+            return cache
+        }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_camera -> {
@@ -163,9 +169,19 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
-            R.id.action_service -> true
+            R.id.action_service -> {
+                val cache = getCache
+                startService(cache)
+                true
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onStop() {
+        Log.d(TAG, "onStop: service-")
+        stopService(getCache)
+        super.onStop()
     }
 
     private fun takePoto() {
