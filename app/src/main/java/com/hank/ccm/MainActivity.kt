@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Nickname
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
@@ -11,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.registerForActivityResult
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -21,6 +23,21 @@ import com.google.android.material.snackbar.Snackbar
 import com.hank.ccm.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private val requestRS = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == RESULT_OK) {
+            val nickName = it.data?.getStringExtra("NICKNAME")
+            val nickNum = it.data?.getIntExtra("NICKNUM", 0)
+            Log.d(TAG, "nick-result- $nickName , $nickNum")
+            //
+            getSharedPreferences("CCM.spf", MODE_PRIVATE).apply {
+                val spfNick = getString("SPFNICK", null)
+                val spfNum = getInt("SPFNUM", 0)
+                Log.d(TAG, "nick-spf- $spfNick , $spfNum ")
+            }
+        }
+    }
     private val TAG: String? = MainActivity::class.java.simpleName
     private lateinit var viewModel: GuessViewModel
     private val requestCamera = registerForActivityResult(
@@ -107,8 +124,22 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
-            R.id.action_nickname -> true
-            R.id.action_name -> true
+            R.id.action_nickname -> {
+                Intent(this, NickActivity::class.java).apply {
+                    putExtra("NAME", "Hank")
+                    putExtra("LEVEL", 543)
+                }.also {
+//                    startActivity(it)
+                    requestRS.launch(it)
+                }
+                true
+            }
+
+            R.id.action_name -> {
+
+                true
+            }
+
             R.id.action_words -> true
             R.id.action_room -> true
             R.id.action_news -> true
