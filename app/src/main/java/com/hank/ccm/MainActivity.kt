@@ -5,17 +5,24 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.hank.ccm.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private val TAG: String? = MainActivity::class.java.simpleName
+    private lateinit var viewModel: GuessViewModel
     private val requestCamera = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) {
@@ -37,7 +44,51 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        // ViewModel
+        viewModel = ViewModelProvider(this).get(GuessViewModel::class.java)
+        viewModel.secretData.observe(this) { secretData ->
+            Log.d(TAG, "guess-secret- ${secretData} ")
+        }
+        viewModel.counter.observe(this) { counter ->
+            binding.tvCounter.text = counter.toString()
+        }
+        viewModel.gameStatus.observe(this) { status ->
+            if (status != GameStatus.INIT) {
+                val message = when (status) {
+                    GameStatus.BIGGER -> "Bigger"
+                    GameStatus.SMALLER -> "Smaller"
+                    GameStatus.BINGO -> "You got it!"
+                    GameStatus.INIT -> ""
+                }
+                AlertDialog.Builder(this)
+                    .setTitle("Guess Status")
+                    .setMessage(message)
+                    .setPositiveButton("OK") { guess, which ->
+                        binding.edNumber.text.clear()
+                    }
+                    .setNegativeButton("Replay") { reset, which ->
+                        binding.edNumber.text.clear()
+                        viewModel.vmReset()
+                    }
+                    .show()
+            }
+        }
 
+    }
+
+    fun setGuess(view: View) {
+        if (!binding.edNumber.text.toString().equals("")) {
+            val num = binding.edNumber.text.toString().toInt()
+            viewModel.vmGuess(num)
+        }
+    }
+
+    fun setReset(view: View) {
+        viewModel.vmReset()
+    }
+
+    fun setFinish(view: View) {
+        finish()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
