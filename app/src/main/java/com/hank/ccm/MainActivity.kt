@@ -156,7 +156,13 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
-            R.id.action_news -> true
+            R.id.action_news -> {
+                Intent(this, NewsActivity::class.java).also {
+                    startActivity(it)
+                }
+                true
+            }
+
             R.id.action_service -> true
         }
         return super.onOptionsItemSelected(item)
