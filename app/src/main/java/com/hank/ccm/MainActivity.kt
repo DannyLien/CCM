@@ -149,7 +149,13 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
-            R.id.action_room -> true
+            R.id.action_room -> {
+                Intent(this, RoomActivity::class.java).also {
+                    startActivity(it)
+                }
+                true
+            }
+
             R.id.action_news -> true
             R.id.action_service -> true
         }
