@@ -15,6 +15,9 @@
         android:theme="@style/Theme.CCM"
         tools:targetApi="31">
         <activity
+            android:name=".NameActivity"
+            android:exported="false" />
+        <activity
             android:name=".NickActivity"
             android:exported="false" />
         <activity

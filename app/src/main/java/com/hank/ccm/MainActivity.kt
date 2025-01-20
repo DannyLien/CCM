@@ -136,7 +136,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.action_name -> {
-
+                Intent(this, NameActivity::class.java).also {
+                    startActivity(it)
+                }
                 true
             }
 
