@@ -1,17 +1,23 @@
 package com.hank.ccm
 
 import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
 import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 import com.hank.ccm.databinding.ActivityNameBinding
 
 
 class NameActivity : AppCompatActivity() {
+    private val TAG: String? = NameActivity::class.java.simpleName
     private lateinit var binding: ActivityNameBinding
 
     // 資料
@@ -44,6 +50,17 @@ class NameActivity : AppCompatActivity() {
             )
         }
         sp.prompt = "Select Name"
+        sp.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(adapter: AdapterView<*>?, view: View, i: Int, l: Long) {
+                Log.d(
+                    TAG, "onItemSelected: ccm-name-spinner- " +
+                            "${i} , ${names.get(i)}"
+                )
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+        }
         // Recycler View
         val recy = binding.rvName
         recy.setHasFixedSize(true)
@@ -51,7 +68,8 @@ class NameActivity : AppCompatActivity() {
         recy.adapter = NameAdapter(names)
 
     }
-//
+
+    //
     fun setNameFinish(view: View) {
         finish()
     }

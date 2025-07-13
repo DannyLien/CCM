@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class GuessViewModel : ViewModel() {
-    var secret = (1..10).random()
+    var secret = (1..9).random()
     var secretData = MutableLiveData<Int>()
     var counter = MutableLiveData<Int>()
     var gameStatus = MutableLiveData<GameStatus>()
@@ -26,7 +26,7 @@ class GuessViewModel : ViewModel() {
     }
 
     fun vmReset() {
-        secret = (1..10).random()
+        secret = (1..9).random()
         secretData.value = secret
         counter.value = 0
         gameStatus.value = GameStatus.INIT

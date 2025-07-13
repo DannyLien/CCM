@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.provider.ContactsContract.CommonDataKinds.Nickname
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
@@ -12,12 +11,10 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.registerForActivityResult
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.hank.ccm.databinding.ActivityMainBinding
@@ -29,27 +26,39 @@ class MainActivity : AppCompatActivity() {
         if (it.resultCode == RESULT_OK) {
             val nickName = it.data?.getStringExtra("NICKNAME")
             val nickNum = it.data?.getIntExtra("NICKNUM", 0)
-            Log.d(TAG, "nick-result- $nickName , $nickNum")
+            Log.d(TAG, "ccm-nick-result- $nickName , $nickNum")
             //
             getSharedPreferences("CCM.spf", MODE_PRIVATE).apply {
                 val spfNick = getString("SPFNICK", null)
                 val spfNum = getInt("SPFNUM", 0)
-                Log.d(TAG, "nick-spf- $spfNick , $spfNum ")
+                Log.d(TAG, "ccm-nick-spf- $spfNick , $spfNum ")
             }
         }
     }
-    private val TAG: String? = MainActivity::class.java.simpleName
-    private lateinit var viewModel: GuessViewModel
-    private val requestCamera = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
+//    private val requestCamera = registerForActivityResult(
+//        ActivityResultContracts.RequestPermission()
+//    ) {
+//        if (it) {
+//            takePoto()
+//        } else {
+//            Snackbar.make(binding.root, "Denied", Snackbar.LENGTH_LONG).show()
+//        }
+//    }
+    private val requestPermission = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
     ) {
-        if (it) {
+        if (
+            it[Manifest.permission.CAMERA] == true &&
+            it[Manifest.permission.INTERNET] == true
+        ) {
             takePoto()
         } else {
-            Snackbar.make(binding.root, "Denied", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(binding.root, "Loss Permission", Snackbar.LENGTH_LONG).show()
         }
     }
     private lateinit var binding: ActivityMainBinding
+    private val TAG: String? = MainActivity::class.java.simpleName
+    private lateinit var viewModel: GuessViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         // ViewModel
         viewModel = ViewModelProvider(this).get(GuessViewModel::class.java)
         viewModel.secretData.observe(this) { secretData ->
-            Log.d(TAG, "guess-secret- ${secretData} ")
+            Log.d(TAG, "ccm-guess-secret- ${secretData} ")
         }
         viewModel.counter.observe(this) { counter ->
             binding.tvCounter.text = counter.toString()
@@ -90,7 +99,6 @@ class MainActivity : AppCompatActivity() {
                     .show()
             }
         }
-
     }
 
     fun setGuess(view: View) {
@@ -122,10 +130,20 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_camera -> {
-                if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                if (checkSelfPermission(Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(Manifest.permission.INTERNET)
+                    == PackageManager.PERMISSION_GRANTED
+                ) {
                     takePoto()
                 } else {
-                    requestCamera.launch(Manifest.permission.CAMERA)
+//                    requestCamera.launch(Manifest.permission.CAMERA)
+                    requestPermission.launch(
+                        arrayOf(
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.INTERNET,
+                        )
+                    )
                 }
                 true
             }
@@ -179,9 +197,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        Log.d(TAG, "onStop: service-")
-        stopService(getCache)
         super.onStop()
+        Log.d(TAG, "onStop: main-service-")
+        stopService(getCache)
     }
 
     private fun takePoto() {
@@ -191,3 +209,12 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
+
+
+
+
+
+
+
+
+

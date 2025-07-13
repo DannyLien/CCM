@@ -27,7 +27,7 @@ class NickActivity : AppCompatActivity() {
 
         val name = intent.getStringExtra("NAME")
         val level = intent.getIntExtra("LEVEL", 0)
-        Log.d(TAG, "nick-intent- $name , $level")
+        Log.d(TAG, "ccm-nick-intent- $name , $level")
 
     }
 

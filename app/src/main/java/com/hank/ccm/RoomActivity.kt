@@ -44,7 +44,7 @@ class RoomActivity : AppCompatActivity() {
 
             GuessRoomDatabase.getInstance(this@RoomActivity)?.recordedDao()?.getAll()
                 ?.forEach {
-                    Log.d(TAG, "room-getall- ${it.id} , ${it.nickname} , ${it.counter} ")
+                    Log.d(TAG, "ccm-room-getall- ${it.id} , ${it.nickname} , ${it.counter} ")
                 }
         }
 

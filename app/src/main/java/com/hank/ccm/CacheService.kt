@@ -9,21 +9,32 @@ class CacheService : Service() {
     private val TAG: String? = CacheService::class.java.simpleName
 
     override fun onBind(intent: Intent?): IBinder? {
+        Log.d(TAG, "onBind: ccm-service-")
         return null
     }
 
     override fun onStart(intent: Intent?, startId: Int) {
-        Log.d(TAG, "onStart: service-")
         super.onStart(intent, startId)
+        Log.d(TAG, "onStart: ccm-service-")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(TAG, "onStartCommand: service-")
+        Log.d(TAG, "onStartCommand: ccm-service-")
         return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {
-        Log.d(TAG, "onDestroy: service-")
         super.onDestroy()
+        Log.d(TAG, "onDestroy: ccm-service-")
     }
+
 }
+
+
+
+
+
+
+
+
+

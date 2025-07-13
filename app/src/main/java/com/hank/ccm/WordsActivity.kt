@@ -31,16 +31,20 @@ class WordsActivity : AppCompatActivity() {
         //
         myViewModel = ViewModelProvider(this).get(MyViewModel::class.java)
         myViewModel.vmJson()
-        myViewModel.vmGson()
+//        myViewModel.vmGson()
+        myViewModel.vmMovie()
         //
         val recy = binding.rvWord
         recy.setHasFixedSize(true)
         recy.layoutManager = LinearLayoutManager(this)
-        //
+        //Gson
         myViewModel.wordsData.observe(this) {
             recy.adapter = WordsAdapter(it)
         }
-//
+        //Movie
+        myViewModel.movieData.observe(this){
+            recy.adapter = MovieAdapter(it)
+        }
     }
 
     fun setWordFinish(view: View) {
