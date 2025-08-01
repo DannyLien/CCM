@@ -34,20 +34,21 @@ class RoomActivity : AppCompatActivity() {
         val rec3 = Recorded("Jack  ", 45)
         val rec4 = Recorded("Linda ", 56)
         val rec5 = Recorded("Amy   ", 67)
-
         CoroutineScope(Dispatchers.IO).launch {
-//            GuessRoomDatabase.getInstance(this@RoomActivity)?.recordedDao()?.insert(rec1)
-//            GuessRoomDatabase.getInstance(this@RoomActivity)?.recordedDao()?.insert(rec2)
-//            GuessRoomDatabase.getInstance(this@RoomActivity)?.recordedDao()?.insert(rec3)
-//            GuessRoomDatabase.getInstance(this@RoomActivity)?.recordedDao()?.insert(rec4)
-//            GuessRoomDatabase.getInstance(this@RoomActivity)?.recordedDao()?.insert(rec5)
-
+            val dataBaseSize =
+                GuessRoomDatabase.getInstance(this@RoomActivity)?.recordedDao()?.getAll()?.size
+            if(dataBaseSize == 0){
+                GuessRoomDatabase.getInstance(this@RoomActivity)?.recordedDao()?.insert(rec1)
+                GuessRoomDatabase.getInstance(this@RoomActivity)?.recordedDao()?.insert(rec2)
+                GuessRoomDatabase.getInstance(this@RoomActivity)?.recordedDao()?.insert(rec3)
+                GuessRoomDatabase.getInstance(this@RoomActivity)?.recordedDao()?.insert(rec4)
+                GuessRoomDatabase.getInstance(this@RoomActivity)?.recordedDao()?.insert(rec5)
+            }
             GuessRoomDatabase.getInstance(this@RoomActivity)?.recordedDao()?.getAll()
                 ?.forEach {
                     Log.d(TAG, "ccm-room-getall- ${it.id} , ${it.nickname} , ${it.counter} ")
                 }
         }
-
     }
 
     fun setRoomFinish(view: View) {
